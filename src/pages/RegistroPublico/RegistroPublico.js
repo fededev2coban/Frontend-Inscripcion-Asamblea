@@ -61,8 +61,8 @@ const RegistroPublico = () => {
       const datos = {
         ...formData,
         dpi: parseInt(formData.dpi),
-        telefono: formData.telefono ? parseInt(formData.telefono) : null,
-        id_cooperativa: formData.id_cooperativa ? parseInt(formData.id_cooperativa) : null
+        telefono: formData.telefono ? formData.telefono.toString() : null,
+        id_cooperativa: formData.id_cooperativa ? parseInt(formData.id_cooperativa) : 0
       };
 
       const response = await registroPublicoService.registrarEvento(link, datos);

@@ -17,7 +17,7 @@ const Personas = () => {
     email: '',
     dpi: '',
     telefono: '',
-    id_cooperativa: 0,
+    id_cooperativa: '',
     institucion: '',
     puesto: ''
   });
@@ -114,7 +114,7 @@ const Personas = () => {
       email: '',
       dpi: '',
       telefono: '',
-      id_cooperativa: 0,
+      id_cooperativa: '',
       institucion: '',
       puesto: ''
     });
