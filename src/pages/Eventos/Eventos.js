@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaPlus, FaEdit, FaTrash, FaSearch, FaUsers } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaSearch, FaUsers, FaShare, FaEyeSlash, FaCopy, FaExternalLinkAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { eventoService } from '../../services/eventoService';
 import '../Cooperativas/Cooperativas.css';
@@ -9,6 +9,8 @@ const Eventos = () => {
   const [eventos, setEventos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showLinkModal, setShowLinkModal] = useState(false);
+  const [linkPublico, setLinkPublico] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [formData, setFormData] = useState({
@@ -94,6 +96,37 @@ const Eventos = () => {
     });
   };
 
+  const handlePublish = async (evento) => {
+    try {
+      if (evento.publicado) {
+        // Despublicar
+        if (window.confirm('¿Deseas despublicar este evento? El link público dejará de funcionar.')) {
+          await eventoService.unpublish(evento.id_evento);
+          showAlert('Evento despublicado exitosamente');
+          loadEventos();
+        }
+      } else {
+        // Publicar
+        const response = await eventoService.publish(evento.id_evento);
+        if (response.success) {
+          setLinkPublico(response.data);
+          setShowLinkModal(true);
+          loadEventos();
+        }
+      }
+    } catch (error) {
+      showAlert('Error al publicar/despublicar evento', 'error');
+    }
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      showAlert('Link copiado al portapapeles');
+    }).catch(() => {
+      showAlert('Error al copiar link', 'error');
+    });
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('es-GT', {
@@ -156,6 +189,7 @@ const Eventos = () => {
                 <th>Hora</th>
                 <th>Lugar</th>
                 <th>Estado</th>
+                <th>Publicado</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -173,10 +207,28 @@ const Eventos = () => {
                     </span>
                   </td>
                   <td>
+                    {evento.publicado ? (
+                      <span className="badge badge-info">
+                        Publicado
+                      </span>
+                    ) : (
+                      <span className="badge badge-warning">
+                        No publicado
+                      </span>
+                    )}
+                  </td>
+                  <td>
                     <div className="action-buttons">
+                      <button
+                        className={`btn btn-sm ${evento.publicado ? 'btn-warning' : 'btn-success'}`}
+                        onClick={() => handlePublish(evento)}
+                        title={evento.publicado ? 'Despublicar evento' : 'Publicar evento'}
+                      >
+                        {evento.publicado ? <FaEyeSlash /> : <FaShare />}
+                      </button>
                       <Link
                         to={`/inscripciones?evento=${evento.id_evento}`}
-                        className="btn btn-sm btn-success"
+                        className="btn btn-sm btn-info"
                         title="Ver inscripciones"
                       >
                         <FaUsers />
@@ -293,6 +345,56 @@ const Eventos = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showLinkModal && linkPublico && (
+        <div className="modal-overlay" onClick={() => setShowLinkModal(false)}>
+          <div className="modal modal-link" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>🎉 ¡Evento Publicado!</h3>
+              <button className="modal-close" onClick={() => setShowLinkModal(false)}>
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <p className="link-description">
+                El evento ha sido publicado exitosamente. Comparte este link para que las personas puedan registrarse:
+              </p>
+              
+              <div className="link-box">
+                <div className="link-url">
+                  {linkPublico.url_completa}
+                </div>
+                <button 
+                  className="btn btn-primary btn-copy"
+                  onClick={() => copyToClipboard(linkPublico.url_completa)}
+                >
+                  <FaCopy /> Copiar Link
+                </button>
+              </div>
+
+              <div className="link-actions">
+                <a 
+                  href={linkPublico.url_completa}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-secondary"
+                >
+                  <FaExternalLinkAlt /> Abrir en nueva pestaña
+                </a>
+              </div>
+
+              <div className="link-info">
+                <p>
+                  <strong>Código del link:</strong> <code>{linkPublico.link_publico}</code>
+                </p>
+                <p className="link-note">
+                  💡 Este link permanecerá activo mientras el evento esté publicado. Puedes despublicarlo en cualquier momento desde la tabla de eventos.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -1,3 +1,104 @@
 .eventos-page {
   animation: fadeIn 0.3s ease-in;
 }
+
+/* Modal de Link Público */
+.modal-link {
+  max-width: 650px;
+}
+
+.link-description {
+  color: var(--gray-700);
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.link-box {
+  background: var(--gray-50);
+  border: 2px dashed var(--primary-blue);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.link-url {
+  flex: 1;
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: var(--primary-blue);
+  font-weight: 600;
+  word-break: break-all;
+  padding: 0.5rem;
+  background: var(--white);
+  border-radius: var(--radius-sm);
+}
+
+.btn-copy {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.link-actions {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.link-info {
+  background: var(--gray-50);
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--info);
+}
+
+.link-info p {
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--gray-700);
+}
+
+.link-info p:last-child {
+  margin-bottom: 0;
+}
+
+.link-info strong {
+  color: var(--gray-900);
+}
+
+.link-info code {
+  background: var(--white);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-family: monospace;
+  color: var(--primary-blue);
+  font-weight: 600;
+}
+
+.link-note {
+  font-style: italic;
+  color: var(--gray-600);
+}
+
+.btn-info {
+  background-color: var(--info);
+  color: var(--white);
+}
+
+.btn-info:hover:not(:disabled) {
+  background-color: #2563EB;
+}
+
+@media (max-width: 768px) {
+  .link-box {
+    flex-direction: column;
+  }
+
+  .btn-copy {
+    width: 100%;
+  }
+}
+

@@ -17,7 +17,7 @@ const Personas = () => {
     email: '',
     dpi: '',
     telefono: '',
-    id_cooperativa: '',
+    id_cooperativa: 0,
     institucion: '',
     puesto: ''
   });
@@ -60,8 +60,8 @@ const Personas = () => {
       const data = {
         ...formData,
         dpi: parseInt(formData.dpi),
-        telefono: formData.telefono ? parseInt(formData.telefono) : null,
-        id_cooperativa: formData.id_cooperativa ? parseInt(formData.id_cooperativa) : null
+        telefono: formData.telefono ? formData.telefono.toString() : null,
+        id_cooperativa: formData.id_cooperativa ? parseInt(formData.id_cooperativa) : 0
       };
 
       if (editingId) {
@@ -87,7 +87,7 @@ const Personas = () => {
       email: persona.email || '',
       dpi: persona.dpi.toString(),
       telefono: persona.telefono ? persona.telefono.toString() : '',
-      id_cooperativa: persona.id_cooperativa || '',
+      id_cooperativa: persona.id_cooperativa || 0,
       institucion: persona.institucion || '',
       puesto: persona.puesto
     });
@@ -114,7 +114,7 @@ const Personas = () => {
       email: '',
       dpi: '',
       telefono: '',
-      id_cooperativa: '',
+      id_cooperativa: 0,
       institucion: '',
       puesto: ''
     });

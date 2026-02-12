@@ -35,4 +35,19 @@ export const eventoService = {
     const response = await api.delete(`/eventos/${id}`);
     return response.data;
   },
+
+  publish: async (id) => {
+    const response = await api.post(`/eventos/${id}/publicar`);
+    return response.data;
+  },
+
+  unpublish: async (id) => {
+    const response = await api.post(`/eventos/${id}/despublicar`);
+    return response.data;
+  },
+
+  getByPublicLink: async (link) => {
+    const response = await api.get(`/public/evento/${link}`);
+    return response.data;
+  },
 };

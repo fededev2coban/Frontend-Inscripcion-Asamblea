@@ -1,16 +1,28 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { 
   FaHome, 
   FaBuilding, 
   FaCalendarAlt, 
   FaUsers, 
-  FaClipboardList 
+  FaClipboardList,
+  FaSignOutAlt,
+  FaUserCircle
 } from 'react-icons/fa';
 import './Layout.css';
 
 const Layout = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    if (window.confirm('¿Estás seguro de cerrar sesión?')) {
+      logout();
+      navigate('/login');
+    }
+  };
 
   const menuItems = [
     { path: '/', icon: <FaHome />, label: 'Inicio' },
@@ -28,6 +40,21 @@ const Layout = ({ children }) => {
             <h1>FEDECOVERA</h1>
             <p>Sistema de Inscripción a Eventos</p>
           </div>
+          {user && (
+            <div className="header-user">
+              <div className="user-info">
+                <FaUserCircle className="user-icon" />
+                <div className="user-details">
+                  <span className="user-name">{user.nombre_completo || user.username}</span>
+                  <span className="user-rol">{user.rol}</span>
+                </div>
+              </div>
+              <button className="btn-logout" onClick={handleLogout} title="Cerrar sesión">
+                <FaSignOutAlt />
+                <span>Salir</span>
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
