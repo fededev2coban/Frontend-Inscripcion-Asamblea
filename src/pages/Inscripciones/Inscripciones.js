@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { FaTrash, FaChartBar, FaBuilding, FaBriefcase } from 'react-icons/fa';
+import { FaTrash, FaChartBar, FaBuilding, FaBriefcase, FaUsers } from 'react-icons/fa';
 import { registroService } from '../../services/registroService';
 import { eventoService } from '../../services/eventoService';
 import '../Cooperativas/Cooperativas.css';
@@ -137,7 +137,7 @@ const Inscripciones = () => {
               className={`tab-btn ${tabActivo === 'inscritos' ? 'active' : ''}`}
               onClick={() => setTabActivo('inscritos')}
             >
-              <FaBuilding /> Total Inscritos ({registros.inscritostotal.length})
+              <FaUsers /> Total Inscritos ({registros.inscritostotal.length})
             </button>
             <button
               className={`tab-btn ${tabActivo === 'internos' ? 'active' : ''}`}
@@ -168,9 +168,9 @@ const Inscripciones = () => {
                           <th>DPI</th>
                           <th>Email</th>
                           <th>Teléfono</th>
-                          <th>Cooperativa</th>
-                          <th>Comisión</th>
+                          <th>Institución / Coop.</th>
                           <th>Puesto</th>
+                          <th>Comisión</th>
                           <th>Fecha</th>
                           <th>Acciones</th>
                         </tr>
@@ -182,9 +182,17 @@ const Inscripciones = () => {
                             <td>{registro.dpi}</td>
                             <td>{registro.email || '-'}</td>
                             <td>{registro.telefono || '-'}</td>
-                            <td>{registro.name_cooperativa}</td>
-                            <td><span className="badge badge-info">{registro.name_comision}</span></td>
-                            <td><span className="badge badge-success">{registro.name_puesto}</span></td>
+                            <td>{registro.Institucion || '-'}</td>
+                            <td>
+                              <span className="badge badge-success">{registro.Puesto || '-'}</span>
+                            </td>
+                            <td>
+                              {registro.Comision ? (
+                                <span className="badge badge-info">{registro.Comision}</span>
+                              ) : (
+                                <span className="text-gray-400">-</span>
+                              )}
+                            </td>
                             <td>{new Date(registro.createdAt).toLocaleDateString('es-GT')}</td>
                             <td>
                               <button
@@ -202,7 +210,7 @@ const Inscripciones = () => {
                   </div>
                 ) : (
                   <div className="empty-state">
-                    <div className="empty-state-icon">🏢</div>
+                    <div className="empty-state-icon">📝</div>
                     <p className="empty-state-text">No hay total de inscritos</p>
                   </div>
                 )
