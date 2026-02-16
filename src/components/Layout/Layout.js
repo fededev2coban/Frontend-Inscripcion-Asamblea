@@ -6,6 +6,7 @@ import {
   FaBuilding, 
   FaCalendarAlt, 
   FaUsers, 
+  FaUser,
   FaClipboardList,
   FaSignOutAlt,
   FaUserCircle
@@ -29,6 +30,7 @@ const Layout = ({ children }) => {
     { path: '/cooperativas', icon: <FaBuilding />, label: 'Cooperativas' },
     { path: '/eventos', icon: <FaCalendarAlt />, label: 'Eventos' },
     { path: '/personas', icon: <FaUsers />, label: 'Personas' },
+    { path: '/usuarios', icon: <FaUser />, label: 'Usuarios' },
     { path: '/inscripciones', icon: <FaClipboardList />, label: 'Inscripciones' },
   ];
 

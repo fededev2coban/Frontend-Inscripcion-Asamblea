@@ -4,6 +4,7 @@ import {
   FaBuilding, 
   FaCalendarAlt, 
   FaUsers, 
+  FaUser,
   FaClipboardList,
   FaChartLine 
 } from 'react-icons/fa';
@@ -57,6 +58,13 @@ const Home = () => {
       title: 'Personas',
       description: 'Registro de participantes',
       icon: <FaUsers />,
+      path: '/personas',
+      color: '#4A90E2'
+    },
+      {
+      title: 'Usuarios',
+      description: 'Registro de participantes',
+      icon: <FaUser />,
       path: '/personas',
       color: '#4A90E2'
     },
@@ -183,6 +191,17 @@ const Home = () => {
             </div>
             <div className="stat-info">
               <p className="stat-label">Personas</p>
+              <Link to="/personas" className="stat-link">
+                Ver listado →
+              </Link>
+            </div>
+          </div>
+            <div className="stat-card">
+            <div className="stat-icon" style={{ backgroundColor: '#DBEAFE' }}>
+              <FaUser style={{ color: '#4A90E2' }} />
+            </div>
+            <div className="stat-info">
+              <p className="stat-label">Usuarios</p>
               <Link to="/personas" className="stat-link">
                 Ver listado →
               </Link>
