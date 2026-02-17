@@ -11,6 +11,7 @@ import Personas from './pages/Personas/Personas';
 import Usuarios from './pages/Usuarios/Usuarios';
 import Inscripciones from './pages/Inscripciones/Inscripciones';
 import Nuevo_RegistroPublico from './pages/RegistroPublico/Nuevo_RegistroPublico';
+import Asistencia from './pages/Asistencia/Asistencia';
 
 function App() {
   return (
@@ -68,6 +69,14 @@ function App() {
             <PrivateRoute>
               <Layout>
                 <Inscripciones />
+              </Layout>
+            </PrivateRoute>
+          } />
+
+          <Route path="/asistencia" element={
+            <PrivateRoute>
+              <Layout>
+                <Asistencia />
               </Layout>
             </PrivateRoute>
           } />

@@ -8,6 +8,7 @@ import {
   FaUsers, 
   FaUser,
   FaClipboardList,
+  FaUserCheck,
   FaSignOutAlt,
   FaUserCircle
 } from 'react-icons/fa';
@@ -32,6 +33,7 @@ const Layout = ({ children }) => {
     { path: '/personas', icon: <FaUsers />, label: 'Personas' },
     { path: '/usuarios', icon: <FaUser />, label: 'Usuarios' },
     { path: '/inscripciones', icon: <FaClipboardList />, label: 'Inscripciones' },
+    { path: '/asistencia', icon: <FaUserCheck />, label: 'Asistencia' },
   ];
 
   return (
