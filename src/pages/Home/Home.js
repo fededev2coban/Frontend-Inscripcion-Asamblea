@@ -63,9 +63,9 @@ const Home = () => {
     },
       {
       title: 'Usuarios',
-      description: 'Registro de participantes',
+      description: 'Registro de usuarios',
       icon: <FaUser />,
-      path: '/personas',
+      path: '/usuarios',
       color: '#4A90E2'
     },
     {
@@ -202,7 +202,7 @@ const Home = () => {
             </div>
             <div className="stat-info">
               <p className="stat-label">Usuarios</p>
-              <Link to="/personas" className="stat-link">
+              <Link to="/usuarios" className="stat-link">
                 Ver listado →
               </Link>
             </div>
