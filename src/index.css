@@ -297,7 +297,7 @@ code {
 
 .table th,
 .table td {
-  padding: 0.875rem 1rem;
+  padding: 0.875rem 0.5rem;
   text-align: left;
   font-size: 0.875rem;
 }

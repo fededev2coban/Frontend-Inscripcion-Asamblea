@@ -4,6 +4,7 @@ import {
   FaBuilding, 
   FaCalendarAlt, 
   FaUsers, 
+  FaUser,
   FaClipboardList,
   FaChartLine 
 } from 'react-icons/fa';
@@ -29,15 +30,6 @@ const Home = () => {
     }
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-GT', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
   const quickLinks = [
     {
       title: 'Cooperativas',
@@ -58,6 +50,13 @@ const Home = () => {
       description: 'Registro de participantes',
       icon: <FaUsers />,
       path: '/personas',
+      color: '#4A90E2'
+    },
+      {
+      title: 'Usuarios',
+      description: 'Registro de usuarios',
+      icon: <FaUser />,
+      path: '/usuarios',
       color: '#4A90E2'
     },
     {
@@ -184,6 +183,17 @@ const Home = () => {
             <div className="stat-info">
               <p className="stat-label">Personas</p>
               <Link to="/personas" className="stat-link">
+                Ver listado →
+              </Link>
+            </div>
+          </div>
+            <div className="stat-card">
+            <div className="stat-icon" style={{ backgroundColor: '#DBEAFE' }}>
+              <FaUser style={{ color: '#4A90E2' }} />
+            </div>
+            <div className="stat-info">
+              <p className="stat-label">Usuarios</p>
+              <Link to="/usuarios" className="stat-link">
                 Ver listado →
               </Link>
             </div>

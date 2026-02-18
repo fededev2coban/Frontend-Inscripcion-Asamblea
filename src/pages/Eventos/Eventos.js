@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaUsers, FaShare, FaEyeSlash, FaCopy, FaExternalLinkAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { eventoService } from '../../services/eventoService';
@@ -22,11 +22,7 @@ const Eventos = () => {
   });
   const [alert, setAlert] = useState(null);
 
-  useEffect(() => {
-    loadEventos();
-  }, []);
-
-  const loadEventos = async () => {
+  const loadEventos = useCallback(async () => {
     try {
       setLoading(true);
       const response = await eventoService.getAll();
@@ -36,7 +32,11 @@ const Eventos = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadEventos();
+  }, [loadEventos]);
 
   const showAlert = (message, type = 'success') => {
     setAlert({ message, type });
@@ -119,6 +119,20 @@ const Eventos = () => {
     }
   };
 
+  const handleViewLink = (evento) => {
+    if (evento.publicado && evento.link_publico) {
+      // Reconstruimos el objeto linkPublico con la estructura que espera tu modal
+      const baseUrl = process.env.REACT_APP_FRONTEND_URL || 'http://localhost:3001';
+      setLinkPublico({
+        link_publico: evento.link_publico,
+        url_completa: `${baseUrl}/registro/${evento.link_publico}`
+      });
+      setShowLinkModal(true);
+    } else {
+      showAlert('El evento aún no ha sido publicado', 'info');
+    }
+  };
+ 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text).then(() => {
       showAlert('Link copiado al portapapeles');
@@ -247,6 +261,24 @@ const Eventos = () => {
                       >
                         <FaTrash />
                       </button>
+                      {evento.publicado ? (
+                        <button
+                          className="btn btn-sm btn-info"
+                          onClick={() => handleViewLink(evento)}
+                          title="Ver enlace de registro"
+                        >
+                          <FaExternalLinkAlt />
+                        </button>
+                      ) : (
+                        <button
+                          className="btn btn-sm btn-secondary"
+                          style={{ opacity: 0.5, cursor: 'not-allowed' }}
+                          disabled
+                          title="Evento no publicado"
+                        >
+                          <FaExternalLinkAlt />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>

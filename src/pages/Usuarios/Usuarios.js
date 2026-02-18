@@ -1,32 +1,32 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { FaPlus, FaEdit, FaTrash, FaSearch } from 'react-icons/fa';
-import { personaService } from '../../services/personaService';
-import { cooperativaService } from '../../services/cooperativaService';
+import { usuarioService } from '../../services/usuarioService';
+import { rolService } from '../../services/rolService';
 import '../Cooperativas/Cooperativas.css';
 
 const Personas = () => {
-  const [personas, setPersonas] = useState([]);
-  const [cooperativas, setCooperativas] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
+  const [rol, setRol] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [formData, setFormData] = useState({
-    nombres: '',
-    apellidos: '',
-    email: '',
-    dpi: '',
-    telefono: '',
+    username: '',
+    estado: 1,
+    id_rol: '',
+    nombre_completo: '',
+
   });
   const [alert, setAlert] = useState(null);
 
-  const loadPersonas = useCallback(async () => {
+  const loadUsuarios = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await personaService.getAll();
-      setPersonas(response.data);
+      const response = await usuarioService.getAll();
+      setUsuarios(response.data);
     } catch (error) {
-      showAlert('Error al cargar personas', 'error');
+      showAlert('Error al cargar Usuarios', 'error');
     } finally {
       setLoading(false);
     }
@@ -34,17 +34,17 @@ const Personas = () => {
 
   const loadCooperativas = useCallback(async () => {
     try {
-      const response = await cooperativaService.getActive();
-      setCooperativas(response.data);
+      const response = await rolService.getActive();
+      setRol(response.data);
     } catch (error) {
-      console.error('Error al cargar cooperativas');
+      console.error('Error al cargar roles');
     }
   }, []);
 
   useEffect(() => {
-    loadPersonas();
+    loadUsuarios();
     loadCooperativas();
-  }, [loadPersonas, loadCooperativas]);
+  }, [loadUsuarios, loadCooperativas]);
 
   const showAlert = (message, type = 'success') => {
     setAlert({ message, type });
@@ -58,32 +58,31 @@ const Personas = () => {
         ...formData,
         dpi: parseInt(formData.dpi),
         telefono: formData.telefono ? formData.telefono.toString() : null,
-        id_cooperativa: formData.id_cooperativa ? parseInt(formData.id_cooperativa) : 0
+        id_rol: parseInt(formData.id_rol),
       };
 
       if (editingId) {
-        await personaService.update(editingId, data);
-        showAlert('Persona actualizada exitosamente');
+        await usuarioService.update(editingId, data);
+        showAlert('Usuario actualizada exitosamente');
       } else {
-        await personaService.create(data);
-        showAlert('Persona creada exitosamente');
+        await usuarioService.create(data);
+        showAlert('Usuario creada exitosamente');
       }
       setShowModal(false);
       resetForm();
-      loadPersonas();
+      loadUsuarios();
     } catch (error) {
-      showAlert(error.response?.data?.error || 'Error al guardar persona', 'error');
+      showAlert(error.response?.data?.error || 'Error al guardar Usuario', 'error');
     }
   };
 
-  const handleEdit = (persona) => {
-    setEditingId(persona.id_persona);
+  const handleEdit = (usuario) => {
+    setEditingId(usuario.id_usuario);
     setFormData({
-      nombres: persona.nombres,
-      apellidos: persona.apellidos,
-      email: persona.email || '',
-      dpi: persona.dpi.toString(),
-      telefono: persona.telefono ? persona.telefono.toString() : '',
+      username: usuario.username,
+      estado: usuario.estado,
+      id_rol: usuario.id_rol,
+      nombre_completo: usuario.nombre_completo,
     });
     setShowModal(true);
   };
@@ -91,9 +90,9 @@ const Personas = () => {
   const handleDelete = async (id) => {
     if (window.confirm('¿Está seguro de eliminar esta persona?')) {
       try {
-        await personaService.delete(id);
+        await usuarioService.delete(id);
         showAlert('Persona eliminada exitosamente');
-        loadPersonas();
+        loadUsuarios();
       } catch (error) {
         showAlert('Error al eliminar persona', 'error');
       }
@@ -108,13 +107,16 @@ const Personas = () => {
       email: '',
       dpi: '',
       telefono: '',
+      id_rol: '',
+      institucion: '',
+      puesto: ''
     });
   };
 
-  const filteredPersonas = personas.filter(persona =>
-    persona.nombres.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    persona.apellidos.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    persona.dpi.toString().includes(searchTerm)
+  const filteredUsuarios = usuarios.filter(usuario =>
+    usuario.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    usuario.rolname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    usuario.nombre_completo.toString().includes(searchTerm)
   );
 
   return (
@@ -142,35 +144,38 @@ const Personas = () => {
 
       {loading ? (
         <div className="loading"><div className="spinner"></div></div>
-      ) : filteredPersonas.length > 0 ? (
+      ) : filteredUsuarios.length > 0 ? (
         <div className="table-container">
           <table className="table">
             <thead>
               <tr>
-                <th>Nombre Completo</th>
-                <th>DPI</th>
-                <th>Email</th>
-                <th>Teléfono</th>
-                <th>Cooperativa/Institución</th>
-                <th>Puesto</th>
+                <th>Nombre de Usuario</th>
+                <th>estado</th>
+                <th>nombre rol</th>
+                <th>Nombre completo</th>
+                <th>Fecha de creación</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {filteredPersonas.map((persona) => (
-                <tr key={persona.id_persona}>
-                  <td className="font-semibold">{`${persona.nombres} ${persona.apellidos}`}</td>
-                  <td>{persona.dpi}</td>
-                  <td>{persona.email || '-'}</td>
-                  <td>{persona.telefono || '-'}</td>
-                  <td>{persona.name_cooperativa || persona.institucion || '-'}</td>
-                  <td>{persona.puesto}</td>
+              {filteredUsuarios.map((usuario) => (
+                <tr key={usuario.id_usuario}>
+                  <td className="font-semibold">{`${usuario.username}`}</td>
+                  <td>
+                    <span className={`badge ${usuario.estado ? 'badge-success' : 'badge-error'}`}>
+                      {usuario.estado ? 'Activa' : 'Inactiva'}
+                    </span>
+                  </td>
+                  {/* <td>{usuario.rolname}</td> */}
+                  
+                  <td>{usuario.nombre_completo}</td>
+                  <td>{new Date(usuario.createdAt).toLocaleDateString('es-GT')}</td>
                   <td>
                     <div className="action-buttons">
-                      <button className="btn btn-sm btn-secondary" onClick={() => handleEdit(persona)} title="Editar">
+                      <button className="btn btn-sm btn-secondary" onClick={() => handleEdit(usuario)} title="Editar">
                         <FaEdit />
                       </button>
-                      <button className="btn btn-sm btn-danger" onClick={() => handleDelete(persona.id_persona)} title="Eliminar">
+                      <button className="btn btn-sm btn-danger" onClick={() => handleDelete(usuario.id_usuario)} title="Eliminar">
                         <FaTrash />
                       </button>
                     </div>
@@ -183,7 +188,7 @@ const Personas = () => {
       ) : (
         <div className="empty-state">
           <div className="empty-state-icon">👥</div>
-          <p className="empty-state-text">No se encontraron personas</p>
+          <p className="empty-state-text">No se encontraron usuarios</p>
         </div>
       )}
 
@@ -230,11 +235,11 @@ const Personas = () => {
 
                 <div className="form-group">
                   <label className="form-label">Cooperativa</label>
-                  <select className="form-select" value={formData.id_cooperativa}
-                    onChange={(e) => setFormData({ ...formData, id_cooperativa: e.target.value })}>
+                  <select className="form-select" value={formData.id_rol}
+                    onChange={(e) => setFormData({ ...formData, id_rol: e.target.value })}>
                     <option value="">-- Seleccionar Cooperativa --</option>
-                    {cooperativas.map(coop => (
-                      <option key={coop.id_cooperativa} value={coop.id_cooperativa}>{coop.name_cooperativa}</option>
+                    {rol.map(coop => (
+                      <option key={coop.id_rol} value={coop.id_rol}>{coop.name_cooperativa}</option>
                     ))}
                   </select>
                   <small style={{color: 'var(--gray-500)', fontSize: '0.8125rem'}}>

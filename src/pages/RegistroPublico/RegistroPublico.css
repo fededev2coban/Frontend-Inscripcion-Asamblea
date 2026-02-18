@@ -103,6 +103,92 @@
   font-size: 0.95rem;
 }
 
+/* Selector de Tipo de Registro */
+.tipo-registro-section {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid var(--gray-200);
+}
+
+.tipo-registro-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.tipo-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem 1rem;
+  background: var(--white);
+  border: 2px solid var(--gray-300);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--gray-700);
+}
+
+.tipo-btn svg {
+  font-size: 2.5rem;
+  color: var(--gray-400);
+  transition: var(--transition);
+}
+
+.tipo-btn:hover {
+  border-color: var(--primary-blue);
+  background: var(--gray-50);
+  transform: translateY(-2px);
+}
+
+.tipo-btn:hover svg {
+  color: var(--primary-blue);
+}
+
+.tipo-btn.active {
+  border-color: var(--primary-blue);
+  background: linear-gradient(135deg, rgba(0, 59, 122, 0.05) 0%, rgba(0, 59, 122, 0.1) 100%);
+  color: var(--primary-blue);
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
+}
+
+.tipo-btn.active svg {
+  color: var(--primary-blue);
+  transform: scale(1.1);
+}
+
+/* Secciones de formulario */
+.form-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--gray-300);
+}
+
+.form-section h5 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-section-interno {
+  border-left-color: var(--primary-blue);
+}
+
+.form-section-externo {
+  border-left-color: var(--accent-blue);
+}
+
 .registro-form .form-hint {
   display: block;
   margin-top: 0.5rem;

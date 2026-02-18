@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FaPlus, FaEdit, FaTrash, FaSearch } from 'react-icons/fa';
 import { cooperativaService } from '../../services/cooperativaService';
 import './Cooperativas.css';
@@ -16,11 +16,7 @@ const Cooperativas = () => {
   });
   const [alert, setAlert] = useState(null);
 
-  useEffect(() => {
-    loadCooperativas();
-  }, []);
-
-  const loadCooperativas = async () => {
+  const loadCooperativas = useCallback(async () => {
     try {
       setLoading(true);
       const response = await cooperativaService.getAll();
@@ -30,7 +26,11 @@ const Cooperativas = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadCooperativas();
+  }, [loadCooperativas])
 
   const showAlert = (message, type = 'success') => {
     setAlert({ message, type });

@@ -8,8 +8,10 @@ import Home from './pages/Home/Home';
 import Cooperativas from './pages/Cooperativas/Cooperativas';
 import Eventos from './pages/Eventos/Eventos';
 import Personas from './pages/Personas/Personas';
+import Usuarios from './pages/Usuarios/Usuarios';
 import Inscripciones from './pages/Inscripciones/Inscripciones';
-import RegistroPublico from './pages/RegistroPublico/RegistroPublico';
+import NuevoRegistroPublico from './pages/RegistroPublico/Nuevo_RegistroPublico';
+import Asistencia from './pages/Asistencia/Asistencia';
 
 function App() {
   return (
@@ -20,7 +22,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           
           {/* Ruta Pública de Registro */}
-          <Route path="/registro/:link" element={<RegistroPublico />} />
+          <Route path="/registro/:link" element={<NuevoRegistroPublico />} />
           
           {/* Rutas Privadas con Layout */}
           <Route path="/" element={
@@ -54,11 +56,27 @@ function App() {
               </Layout>
             </PrivateRoute>
           } />
+
+          <Route path="/usuarios" element={
+            <PrivateRoute>
+              <Layout>
+                <Usuarios />
+              </Layout>
+            </PrivateRoute>
+          } />
           
           <Route path="/inscripciones" element={
             <PrivateRoute>
               <Layout>
                 <Inscripciones />
+              </Layout>
+            </PrivateRoute>
+          } />
+
+          <Route path="/asistencia" element={
+            <PrivateRoute>
+              <Layout>
+                <Asistencia />
               </Layout>
             </PrivateRoute>
           } />
