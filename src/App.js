@@ -10,7 +10,7 @@ import Eventos from './pages/Eventos/Eventos';
 import Personas from './pages/Personas/Personas';
 import Usuarios from './pages/Usuarios/Usuarios';
 import Inscripciones from './pages/Inscripciones/Inscripciones';
-import Nuevo_RegistroPublico from './pages/RegistroPublico/Nuevo_RegistroPublico';
+import NuevoRegistroPublico from './pages/RegistroPublico/Nuevo_RegistroPublico';
 import Asistencia from './pages/Asistencia/Asistencia';
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           
           {/* Ruta Pública de Registro */}
-          <Route path="/registro/:link" element={<Nuevo_RegistroPublico />} />
+          <Route path="/registro/:link" element={<NuevoRegistroPublico />} />
           
           {/* Rutas Privadas con Layout */}
           <Route path="/" element={

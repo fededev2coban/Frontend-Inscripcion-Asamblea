@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { registroPublicoService } from '../../services/registroPublicoService';
 import { catalogoService } from '../../services/catalogoService';
@@ -29,32 +29,32 @@ const Nuevo_RegistroPublico = () => {
     puesto: ''
   });
 
-  useEffect(() => {
-    loadData();
-  }, [link]);
+  const loadData = useCallback(async () => {
+  try {
+    setLoading(true);
+    const [eventoRes, coopRes, comRes, puesRes] = await Promise.all([
+      registroPublicoService.getEventoPublico(link),
+      registroPublicoService.getCooperativasPublicas(),
+      catalogoService.getComisiones(),
+      catalogoService.getPuestos()
+    ]);
+    
+    if (eventoRes.success) setEvento(eventoRes.data);
+    else setError('Evento no encontrado');
+    
+    if (coopRes.success) setCooperativas(coopRes.data);
+    if (comRes.success) setComisiones(comRes.data);
+    if (puesRes.success) setPuestos(puesRes.data);
+  } catch (err) {
+    setError('Error al cargar el evento');
+  } finally {
+    setLoading(false);
+  }
+}, [link]);
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const [eventoRes, coopRes, comRes, puesRes] = await Promise.all([
-        registroPublicoService.getEventoPublico(link),
-        registroPublicoService.getCooperativasPublicas(),
-        catalogoService.getComisiones(),
-        catalogoService.getPuestos()
-      ]);
-      
-      if (eventoRes.success) setEvento(eventoRes.data);
-      else setError('Evento no encontrado');
-      
-      if (coopRes.success) setCooperativas(coopRes.data);
-      if (comRes.success) setComisiones(comRes.data);
-      if (puesRes.success) setPuestos(puesRes.data);
-    } catch (err) {
-      setError('Error al cargar el evento');
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+  loadData();
+}, [loadData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

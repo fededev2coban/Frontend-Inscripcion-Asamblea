@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaUsers, FaShare, FaEyeSlash, FaCopy, FaExternalLinkAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { eventoService } from '../../services/eventoService';
@@ -22,11 +22,7 @@ const Eventos = () => {
   });
   const [alert, setAlert] = useState(null);
 
-  useEffect(() => {
-    loadEventos();
-  }, []);
-
-  const loadEventos = async () => {
+  const loadEventos = useCallback(async () => {
     try {
       setLoading(true);
       const response = await eventoService.getAll();
@@ -36,7 +32,11 @@ const Eventos = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadEventos();
+  }, [loadEventos]);
 
   const showAlert = (message, type = 'success') => {
     setAlert({ message, type });

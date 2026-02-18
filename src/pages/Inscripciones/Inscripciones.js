@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { FaTrash, FaChartBar, FaBuilding, FaBriefcase, FaUsers } from 'react-icons/fa';
 import { registroService } from '../../services/registroService';
@@ -16,27 +16,16 @@ const Inscripciones = () => {
   const [tabActivo, setTabActivo] = useState('internos'); // 'internos' o 'externos'
   const [alert, setAlert] = useState(null);
 
-  useEffect(() => {
-    loadEventos();
-  }, []);
-
-  useEffect(() => {
-    if (selectedEvento) {
-      loadRegistros(selectedEvento);
-      loadStats(selectedEvento);
-    }
-  }, [selectedEvento]);
-
-  const loadEventos = async () => {
+  const loadEventos = useCallback(async () => {
     try {
       const response = await eventoService.getActive();
       setEventos(response.data);
     } catch (error) {
       console.error('Error al cargar eventos');
     }
-  };
+  }, []);
 
-  const loadRegistros = async (eventoId) => {
+  const loadRegistros = useCallback(async (eventoId) => {
     try {
       setLoading(true);
       const response = await registroService.getByEvento(eventoId);
@@ -46,16 +35,27 @@ const Inscripciones = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const loadStats = async (eventoId) => {
+  const loadStats = useCallback(async (eventoId) => {
     try {
       const response = await registroService.getEventoStats(eventoId);
       setStats(response.data);
     } catch (error) {
       console.error('Error al cargar estadísticas');
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadEventos();
+  }, [loadEventos]);
+
+  useEffect(() => {
+    if (selectedEvento) {
+      loadRegistros(selectedEvento);
+      loadStats(selectedEvento);
+    }
+  }, [selectedEvento, loadRegistros, loadStats]);
 
   const showAlert = (message, type = 'success') => {
     setAlert({ message, type });

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react'; // 1. Agregado useCallback
 import { authService } from '../services/authService';
 
 const AuthContext = createContext(null);
@@ -8,11 +8,16 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    checkAuth();
+  // 2. Envolvemos logout en useCallback para que sea una referencia estable
+  const logout = useCallback(() => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    setIsAuthenticated(false);
   }, []);
 
-  const checkAuth = async () => {
+  // 3. Envolvemos checkAuth en useCallback e incluimos logout como dependencia
+  const checkAuth = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       if (token) {
@@ -30,7 +35,12 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [logout]);
+
+  // 4. Ahora el useEffect puede tener [checkAuth] sin causar bucles infinitos
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   const login = async (username, password) => {
     try {
@@ -49,13 +59,6 @@ export const AuthProvider = ({ children }) => {
         error: error.response?.data?.error || 'Error al iniciar sesión' 
       };
     }
-  };
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
-    setIsAuthenticated(false);
   };
 
   const value = {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   FaCheck, FaTimes, FaClock, FaFileExcel, FaFilePdf,
@@ -134,21 +134,11 @@ const Asistencia = () => {
   const [generando, setGenerando]       = useState(false);
 
   // ── Carga inicial ──────────────────────────────────────────────────────────
-  useEffect(() => { loadEventos(); }, []);
-  useEffect(() => { if (selectedEvento) loadAsistencia(selectedEvento); }, [selectedEvento]);
 
-  const loadEventos = async () => {
-    try {
-      const res = await eventoService.getActive();
-      setEventos(res.data);
-    } catch { /* silencioso */ }
-  };
-
-  const loadAsistencia = async (id) => {
+  const loadAsistencia = useCallback(async (id) => {
     try {
       setLoading(true);
       const res = await asistenciaService.getAsistenciaEvento(id);
-      // Unir asistieron + registrados + no_asistieron en un solo array
       const todo = [
         ...res.data.asistieron,
         ...res.data.registrados,
@@ -160,7 +150,24 @@ const Asistencia = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []); 
+
+  useEffect(() => { 
+    if (selectedEvento) {
+      loadAsistencia(selectedEvento); 
+    }
+  }, [selectedEvento, loadAsistencia]);
+
+  const loadEventos = useCallback(async () => {
+    try {
+      const res = await eventoService.getActive();
+      setEventos(res.data);
+    } catch { /* silencioso */ }
+  }, []);
+
+  useEffect(() => { 
+    loadEventos(); 
+  }, [loadEventos]);
 
   const showAlert = (message, type = 'success') => {
     setAlert({ message, type });

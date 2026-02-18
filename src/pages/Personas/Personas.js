@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FaPlus, FaEdit, FaTrash, FaSearch } from 'react-icons/fa';
 import { personaService } from '../../services/personaService';
 import { cooperativaService } from '../../services/cooperativaService';
@@ -20,12 +20,7 @@ const Personas = () => {
   });
   const [alert, setAlert] = useState(null);
 
-  useEffect(() => {
-    loadPersonas();
-    loadCooperativas();
-  }, []);
-
-  const loadPersonas = async () => {
+  const loadPersonas = useCallback(async () => {
     try {
       setLoading(true);
       const response = await personaService.getAll();
@@ -35,16 +30,21 @@ const Personas = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const loadCooperativas = async () => {
+  const loadCooperativas = useCallback(async () => {
     try {
       const response = await cooperativaService.getActive();
       setCooperativas(response.data);
     } catch (error) {
       console.error('Error al cargar cooperativas');
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadPersonas();
+    loadCooperativas();
+  }, [loadPersonas, loadCooperativas]);
 
   const showAlert = (message, type = 'success') => {
     setAlert({ message, type });

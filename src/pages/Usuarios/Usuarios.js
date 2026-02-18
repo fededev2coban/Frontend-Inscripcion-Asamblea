@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FaPlus, FaEdit, FaTrash, FaSearch } from 'react-icons/fa';
 import { usuarioService } from '../../services/usuarioService';
 import { rolService } from '../../services/rolService';
@@ -20,12 +20,7 @@ const Personas = () => {
   });
   const [alert, setAlert] = useState(null);
 
-  useEffect(() => {
-    loadUsuarios();
-    loadCooperativas();
-  }, []);
-
-  const loadUsuarios = async () => {
+  const loadUsuarios = useCallback(async () => {
     try {
       setLoading(true);
       const response = await usuarioService.getAll();
@@ -35,16 +30,21 @@ const Personas = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const loadCooperativas = async () => {
+  const loadCooperativas = useCallback(async () => {
     try {
       const response = await rolService.getActive();
       setRol(response.data);
     } catch (error) {
-      console.error('Error al cargar cooperativas');
+      console.error('Error al cargar roles');
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadUsuarios();
+    loadCooperativas();
+  }, [loadUsuarios, loadCooperativas]);
 
   const showAlert = (message, type = 'success') => {
     setAlert({ message, type });
