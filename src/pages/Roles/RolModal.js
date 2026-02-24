@@ -9,11 +9,6 @@ const RolModal = ({ editingId, onClose, onSuccess, showAlert }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (editingId) {
-      loadRol();
-    }
-  }, [editingId]);
-
   const loadRol = async () => {
     try {
       const response = await rolService.getById(editingId);
@@ -27,6 +22,11 @@ const RolModal = ({ editingId, onClose, onSuccess, showAlert }) => {
       onClose();
     }
   };
+
+  if (editingId) {
+    loadRol();
+  }
+}, [editingId, onClose, showAlert]); // Agregamos estas props que también se usan dentro
 
   const handleSubmit = async (e) => {
     e.preventDefault();
