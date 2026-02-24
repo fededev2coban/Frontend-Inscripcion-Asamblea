@@ -1,22 +1,23 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FaPlus, FaEdit, FaTrash, FaSearch } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaSearch, FaToggleOn, FaToggleOff } from 'react-icons/fa';
 import { usuarioService } from '../../services/usuarioService';
 import { rolService } from '../../services/rolService';
 import '../Cooperativas/Cooperativas.css';
 
-const Personas = () => {
+const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
-  const [rol, setRol] = useState([]);
+  const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
-    estado: 1,
-    id_rol: '',
+    password: '',
     nombre_completo: '',
-
+    id_rol: '',
+    estado: 1
   });
   const [alert, setAlert] = useState(null);
 
@@ -32,19 +33,19 @@ const Personas = () => {
     }
   }, []);
 
-  const loadCooperativas = useCallback(async () => {
+  const loadRoles = useCallback(async () => {
     try {
-      const response = await rolService.getActive();
-      setRol(response.data);
+      const response = await rolService.getAll();
+      setRoles(response.data);
     } catch (error) {
-      console.error('Error al cargar roles');
+      console.error('Error al cargar roles', error);
     }
   }, []);
 
   useEffect(() => {
     loadUsuarios();
-    loadCooperativas();
-  }, [loadUsuarios, loadCooperativas]);
+    loadRoles();
+  }, [loadUsuarios, loadRoles]);
 
   const showAlert = (message, type = 'success') => {
     setAlert({ message, type });
@@ -54,20 +55,38 @@ const Personas = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Validar que los campos requeridos estén presentes
+      if (!formData.username || !formData.nombre_completo || !formData.id_rol) {
+        showAlert('Por favor complete todos los campos requeridos', 'error');
+        return;
+      }
+
+      // Para creación, la contraseña es requerida
+      if (!editingId && !formData.password) {
+        showAlert('La contraseña es requerida para nuevos usuarios', 'error');
+        return;
+      }
+
       const data = {
-        ...formData,
-        dpi: parseInt(formData.dpi),
-        telefono: formData.telefono ? formData.telefono.toString() : null,
+        username: formData.username,
+        nombre_completo: formData.nombre_completo,
         id_rol: parseInt(formData.id_rol),
+        estado: parseInt(formData.estado)
       };
+
+      // Solo incluir password si se proporcionó (para creación o actualización con cambio de contraseña)
+      if (formData.password) {
+        data.password = formData.password;
+      }
 
       if (editingId) {
         await usuarioService.update(editingId, data);
-        showAlert('Usuario actualizada exitosamente');
+        showAlert('Usuario actualizado exitosamente');
       } else {
         await usuarioService.create(data);
-        showAlert('Usuario creada exitosamente');
+        showAlert('Usuario creado exitosamente');
       }
+      
       setShowModal(false);
       resetForm();
       loadUsuarios();
@@ -80,43 +99,57 @@ const Personas = () => {
     setEditingId(usuario.id_usuario);
     setFormData({
       username: usuario.username,
-      estado: usuario.estado,
-      id_rol: usuario.id_rol,
+      password: '', // No mostrar la contraseña actual
       nombre_completo: usuario.nombre_completo,
+      id_rol: usuario.id_rol,
+      estado: usuario.estado
     });
     setShowModal(true);
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('¿Está seguro de eliminar esta persona?')) {
+    if (window.confirm('¿Está seguro de eliminar este usuario?')) {
       try {
         await usuarioService.delete(id);
-        showAlert('Persona eliminada exitosamente');
+        showAlert('Usuario eliminado exitosamente');
         loadUsuarios();
       } catch (error) {
-        showAlert('Error al eliminar persona', 'error');
+        showAlert('Error al eliminar usuario', 'error');
+      }
+    }
+  };
+
+  const handleToggleEstado = async (usuario) => {
+    const nuevoEstado = usuario.estado === 1 ? 0 : 1;
+    const accion = nuevoEstado === 1 ? 'activar' : 'desactivar';
+    
+    if (window.confirm(`¿Está seguro de ${accion} este usuario?`)) {
+      try {
+        await usuarioService.toggleEstado(usuario.id_usuario, { estado: nuevoEstado });
+        showAlert(`Usuario ${accion}do exitosamente`);
+        loadUsuarios();
+      } catch (error) {
+        showAlert(`Error al ${accion} usuario`, 'error');
       }
     }
   };
 
   const resetForm = () => {
     setEditingId(null);
+    setShowPassword(false);
     setFormData({
-      nombres: '',
-      apellidos: '',
-      email: '',
-      dpi: '',
-      telefono: '',
+      username: '',
+      password: '',
+      nombre_completo: '',
       id_rol: '',
-      institucion: '',
-      puesto: ''
+      estado: 1
     });
   };
 
   const filteredUsuarios = usuarios.filter(usuario =>
-    usuario.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    usuario.rolname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    usuario.nombre_completo.toString().includes(searchTerm)
+    usuario.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    usuario.nombre_completo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    usuario.rolname?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -124,9 +157,15 @@ const Personas = () => {
       {alert && <div className={`alert alert-${alert.type}`}>{alert.message}</div>}
 
       <div className="page-header">
-        <h2>Gestión de Personas</h2>
-        <button className="btn btn-primary" onClick={() => { resetForm(); setShowModal(true); }}>
-          <FaPlus /> Nueva Persona
+        <h2>Gestión de Usuarios</h2>
+        <button 
+          className="btn btn-primary" 
+          onClick={() => { 
+            resetForm(); 
+            setShowModal(true); 
+          }}
+        >
+          <FaPlus /> Nuevo Usuario
         </button>
       </div>
 
@@ -135,7 +174,7 @@ const Personas = () => {
           <FaSearch />
           <input
             type="text"
-            placeholder="Buscar por nombre, apellido o DPI..."
+            placeholder="Buscar por usuario, nombre o rol..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -149,33 +188,49 @@ const Personas = () => {
           <table className="table">
             <thead>
               <tr>
-                <th>Nombre de Usuario</th>
-                <th>estado</th>
-                <th>nombre rol</th>
-                <th>Nombre completo</th>
-                <th>Fecha de creación</th>
+                <th>Usuario</th>
+                <th>Nombre Completo</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Fecha Creación</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {filteredUsuarios.map((usuario) => (
                 <tr key={usuario.id_usuario}>
-                  <td className="font-semibold">{`${usuario.username}`}</td>
+                  <td className="font-semibold">{usuario.username}</td>
+                  <td>{usuario.nombre_completo}</td>
                   <td>
-                    <span className={`badge ${usuario.estado ? 'badge-success' : 'badge-error'}`}>
-                      {usuario.estado ? 'Activa' : 'Inactiva'}
+                    <span className="badge badge-info">{usuario.rolname}</span>
+                  </td>
+                  <td>
+                    <span className={`badge ${usuario.estado === 1 ? 'badge-success' : 'badge-error'}`}>
+                      {usuario.estado === 1 ? 'Activo' : 'Inactivo'}
                     </span>
                   </td>
-                  {/* <td>{usuario.rolname}</td> */}
-                  
-                  <td>{usuario.nombre_completo}</td>
-                  <td>{new Date(usuario.createdAt).toLocaleDateString('es-GT')}</td>
+                  <td>{new Date(usuario.createdat).toLocaleDateString('es-GT')}</td>
                   <td>
                     <div className="action-buttons">
-                      <button className="btn btn-sm btn-secondary" onClick={() => handleEdit(usuario)} title="Editar">
+                      <button 
+                        className="btn btn-sm btn-secondary" 
+                        onClick={() => handleEdit(usuario)} 
+                        title="Editar"
+                      >
                         <FaEdit />
                       </button>
-                      <button className="btn btn-sm btn-danger" onClick={() => handleDelete(usuario.id_usuario)} title="Eliminar">
+                      <button 
+                        className={`btn btn-sm ${usuario.estado === 1 ? 'btn-warning' : 'btn-success'}`}
+                        onClick={() => handleToggleEstado(usuario)} 
+                        title={usuario.estado === 1 ? 'Desactivar' : 'Activar'}
+                      >
+                        {usuario.estado === 1 ? <FaToggleOn /> : <FaToggleOff />}
+                      </button>
+                      <button 
+                        className="btn btn-sm btn-danger" 
+                        onClick={() => handleDelete(usuario.id_usuario)} 
+                        title="Eliminar"
+                      >
                         <FaTrash />
                       </button>
                     </div>
@@ -187,7 +242,7 @@ const Personas = () => {
         </div>
       ) : (
         <div className="empty-state">
-          <div className="empty-state-icon">👥</div>
+          <div className="empty-state-icon">👤</div>
           <p className="empty-state-text">No se encontraron usuarios</p>
         </div>
       )}
@@ -196,74 +251,105 @@ const Personas = () => {
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal modal-large" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>{editingId ? 'Editar Persona' : 'Nueva Persona'}</h3>
+              <h3>{editingId ? 'Editar Usuario' : 'Nuevo Usuario'}</h3>
               <button className="modal-close" onClick={() => setShowModal(false)}>×</button>
             </div>
             <form onSubmit={handleSubmit}>
               <div className="modal-body">
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">Nombres *</label>
-                    <input type="text" className="form-input" value={formData.nombres}
-                      onChange={(e) => setFormData({ ...formData, nombres: e.target.value })} required maxLength={50} />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Apellidos *</label>
-                    <input type="text" className="form-input" value={formData.apellidos}
-                      onChange={(e) => setFormData({ ...formData, apellidos: e.target.value })} required maxLength={50} />
-                  </div>
+                <div className="form-group">
+                  <label className="form-label">Usuario *</label>
+                  <input 
+                    type="text" 
+                    className="form-input" 
+                    value={formData.username}
+                    onChange={(e) => setFormData({ ...formData, username: e.target.value })} 
+                    required 
+                    maxLength={50}
+                    placeholder="Nombre de usuario para login"
+                  />
                 </div>
 
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">DPI *</label>
-                    <input type="number" className="form-input" value={formData.dpi}
-                      onChange={(e) => setFormData({ ...formData, dpi: e.target.value })} required />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Teléfono</label>
-                    <input type="number" className="form-input" value={formData.telefono}
-                      onChange={(e) => setFormData({ ...formData, telefono: e.target.value })} />
+                <div className="form-group">
+                  <label className="form-label">
+                    {editingId ? 'Contraseña (dejar en blanco para no cambiar)' : 'Contraseña *'}
+                  </label>
+                  <div style={{ position: 'relative' }}>
+                    <input 
+                      type={showPassword ? "text" : "password"}
+                      className="form-input" 
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })} 
+                      required={!editingId}
+                      minLength={6}
+                      placeholder="Mínimo 6 caracteres"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: 'var(--gray-600)'
+                      }}
+                    >
+                      {showPassword ? '👁️' : '👁️‍🗨️'}
+                    </button>
                   </div>
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Email</label>
-                  <input type="email" className="form-input" value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })} maxLength={100} />
+                  <label className="form-label">Nombre Completo *</label>
+                  <input 
+                    type="text" 
+                    className="form-input" 
+                    value={formData.nombre_completo}
+                    onChange={(e) => setFormData({ ...formData, nombre_completo: e.target.value })} 
+                    required 
+                    maxLength={100}
+                    placeholder="Nombre completo del usuario"
+                  />
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Cooperativa</label>
-                  <select className="form-select" value={formData.id_rol}
-                    onChange={(e) => setFormData({ ...formData, id_rol: e.target.value })}>
-                    <option value="">-- Seleccionar Cooperativa --</option>
-                    {rol.map(coop => (
-                      <option key={coop.id_rol} value={coop.id_rol}>{coop.name_cooperativa}</option>
+                  <label className="form-label">Rol *</label>
+                  <select 
+                    className="form-select" 
+                    value={formData.id_rol}
+                    onChange={(e) => setFormData({ ...formData, id_rol: e.target.value })}
+                    required
+                  >
+                    <option value="">-- Seleccionar Rol --</option>
+                    {roles.map(rol => (
+                      <option key={rol.id_rol} value={rol.id_rol}>{rol.rolname}</option>
                     ))}
                   </select>
-                  <small style={{color: 'var(--gray-500)', fontSize: '0.8125rem'}}>
-                    Si no pertenece a ninguna cooperativa, complete el campo "Institución"
-                  </small>
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Institución</label>
-                  <input type="text" className="form-input" value={formData.institucion}
-                    onChange={(e) => setFormData({ ...formData, institucion: e.target.value })} maxLength={100}
-                    placeholder="Solo si no pertenece a una cooperativa" />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Puesto *</label>
-                  <input type="text" className="form-input" value={formData.puesto}
-                    onChange={(e) => setFormData({ ...formData, puesto: e.target.value })} required maxLength={50} />
+                  <label className="form-label">Estado</label>
+                  <select 
+                    className="form-select" 
+                    value={formData.estado}
+                    onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
+                  >
+                    <option value="1">Activo</option>
+                    <option value="0">Inactivo</option>
+                  </select>
                 </div>
               </div>
 
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
-                <button type="submit" className="btn btn-primary">{editingId ? 'Actualizar' : 'Crear'}</button>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  {editingId ? 'Actualizar' : 'Crear'}
+                </button>
               </div>
             </form>
           </div>
@@ -273,4 +359,4 @@ const Personas = () => {
   );
 };
 
-export default Personas;
+export default Usuarios;
