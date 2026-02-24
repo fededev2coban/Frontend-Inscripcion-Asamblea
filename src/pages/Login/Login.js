@@ -101,11 +101,11 @@ const Login = () => {
           </form>
 
           <div className="login-footer">
-            <p className="login-info">
+            {/* <p className="login-info">
               Usuario por defecto: <strong>admin</strong> / <strong>admin123</strong>
-            </p>
+            </p> */}
             <p className="login-version">
-              v2.0 - Sistema de Gestión de Eventos
+              v3.1 - Sistema de Gestión de Eventos
             </p>
           </div>
         </div>
