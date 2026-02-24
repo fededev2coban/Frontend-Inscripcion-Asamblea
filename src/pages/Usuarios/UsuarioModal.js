@@ -13,27 +13,28 @@ const UsuarioModal = ({ editingId, roles, onClose, onSuccess, showAlert }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const loadUsuario = async () => {
+        try {
+        const response = await usuarioService.getById(editingId);
+        const usuario = response.data;
+        setFormData({
+            username: usuario.username,
+            password: '',
+            nombre_completo: usuario.nombre_completo,
+            id_rol: usuario.id_rol,
+            estado: usuario.estado
+        });
+        } catch (error) {
+        showAlert('Error al cargar datos del usuario', 'error');
+        onClose();
+        }
+    };
     if (editingId) {
       loadUsuario();
     }
-  }, [editingId]);
+  }, [editingId, onClose, showAlert]);
 
-  const loadUsuario = async () => {
-    try {
-      const response = await usuarioService.getById(editingId);
-      const usuario = response.data;
-      setFormData({
-        username: usuario.username,
-        password: '',
-        nombre_completo: usuario.nombre_completo,
-        id_rol: usuario.id_rol,
-        estado: usuario.estado
-      });
-    } catch (error) {
-      showAlert('Error al cargar datos del usuario', 'error');
-      onClose();
-    }
-  };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
