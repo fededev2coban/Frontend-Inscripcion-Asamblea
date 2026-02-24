@@ -30,4 +30,6 @@ export const rolService = {
     const response = await api.delete(`/roles/${id}`);
     return response.data;
   },
+
+  searchByName: async (nombre) => api.get(`/roles/buscar/${nombre}`),
 };

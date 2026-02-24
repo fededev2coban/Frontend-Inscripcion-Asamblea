@@ -8,7 +8,8 @@ import Home from './pages/Home/Home';
 import Cooperativas from './pages/Cooperativas/Cooperativas';
 import Eventos from './pages/Eventos/Eventos';
 import Personas from './pages/Personas/Personas';
-import Usuarios from './pages/Usuarios/Usuarios';
+// import Usuarios from './pages/Usuarios/Usuarios';
+import Users from './pages/Usuarios/Users';
 import Inscripciones from './pages/Inscripciones/Inscripciones';
 import NuevoRegistroPublico from './pages/RegistroPublico/Nuevo_RegistroPublico';
 import Asistencia from './pages/Asistencia/Asistencia';
@@ -60,7 +61,7 @@ function App() {
           <Route path="/usuarios" element={
             <PrivateRoute>
               <Layout>
-                <Usuarios />
+                <Users />
               </Layout>
             </PrivateRoute>
           } />
