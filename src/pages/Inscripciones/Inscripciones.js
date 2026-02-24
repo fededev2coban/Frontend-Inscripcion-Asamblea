@@ -182,18 +182,18 @@ const Inscripciones = () => {
                             <td>{registro.dpi}</td>
                             <td>{registro.email || '-'}</td>
                             <td>{registro.telefono || '-'}</td>
-                            <td>{registro.Institucion || '-'}</td>
+                            <td>{registro.institucion || '-'}</td>
                             <td>
-                              <span className="badge badge-success">{registro.Puesto || '-'}</span>
+                              <span className="badge badge-success">{registro.puesto || '-'}</span>
                             </td>
                             <td>
-                              {registro.Comision ? (
-                                <span className="badge badge-info">{registro.Comision}</span>
+                              {registro.comision ? (
+                                <span className="badge badge-info">{registro.comision}</span>
                               ) : (
                                 <span className="text-gray-400">-</span>
                               )}
                             </td>
-                            <td>{new Date(registro.createdAt).toLocaleDateString('es-GT')}</td>
+                            <td>{new Date(registro.createdat).toLocaleDateString('es-GT')}</td>
                             <td>
                               <button
                                 className="btn btn-sm btn-danger"
@@ -243,7 +243,7 @@ const Inscripciones = () => {
                             <td>{registro.name_cooperativa}</td>
                             <td><span className="badge badge-info">{registro.name_comision}</span></td>
                             <td><span className="badge badge-success">{registro.name_puesto}</span></td>
-                            <td>{new Date(registro.createdAt).toLocaleDateString('es-GT')}</td>
+                            <td>{new Date(registro.createdat).toLocaleDateString('es-GT')}</td>
                             <td>
                               <button
                                 className="btn btn-sm btn-danger"
@@ -292,7 +292,7 @@ const Inscripciones = () => {
                             <td>{registro.telefono || '-'}</td>
                             <td>{registro.institucion}</td>
                             <td><span className="badge badge-info">{registro.puesto}</span></td>
-                            <td>{new Date(registro.createdAt).toLocaleDateString('es-GT')}</td>
+                            <td>{new Date(registro.createdat).toLocaleDateString('es-GT')}</td>
                             <td>
                               <button
                                 className="btn btn-sm btn-danger"

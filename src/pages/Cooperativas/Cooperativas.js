@@ -155,7 +155,7 @@ const Cooperativas = () => {
                       {cooperativa.estado ? 'Activa' : 'Inactiva'}
                     </span>
                   </td>
-                  <td>{new Date(cooperativa.createdAt).toLocaleDateString('es-GT')}</td>
+                  <td>{new Date(cooperativa.createdat).toLocaleDateString('es-GT')}</td>
                   <td>
                     <div className="action-buttons">
                       <button
