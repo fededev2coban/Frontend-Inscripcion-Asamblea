@@ -7,7 +7,7 @@ const Usuarios = () => {
   const [activeTab, setActiveTab] = useState('usuarios'); // 'usuarios' o 'roles'
 
   return (
-    <div className="usuarios-page">
+    <div className="usuarios-module">
       {/* Tabs de navegación */}
       <div className="tabs-container">
         <div className="tabs-header">

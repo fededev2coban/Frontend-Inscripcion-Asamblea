@@ -2,7 +2,7 @@
   padding: 1.5rem;
 }
 
-.tabs-container {
+.usuarios-module .tabs-container {
   display: flex;
   flex-direction: column; /* Esto obliga a que el contenido vaya debajo de las pestañas */
   background: white;
@@ -12,7 +12,7 @@
   width: 100%;
 }
 
-.tabs-header {
+.usuarios-module .tabs-header {
   display: flex;
   flex-direction: row; /* Alineación horizontal */
   background: #f8f9fa;
@@ -21,7 +21,7 @@
   width: 100%;
 }
 
-.tab-btn {
+.usuarios-module .tab-btn {
   padding: 1rem 2.5rem;
   border: none;
   background: transparent;
@@ -36,18 +36,18 @@
   gap: 8px;
 }
 
-.tab-btn:hover {
+.usuarios-module .tab-btn:hover {
   color: #003B7A;
 }
 
-.tab-btn.active {
+.usuarios-module .tab-btn.active {
   color: #003B7A;
   border-bottom-color: #003B7A;
   background: white;
 }
 
 /* El contenido debe ir justo debajo */
-.tab-content {
+.usuarios-module .tab-content {
   padding: 1.5rem;
   width: 100%;
 }
