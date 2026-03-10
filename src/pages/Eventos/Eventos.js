@@ -142,7 +142,14 @@ const Eventos = () => {
   };
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
+    if (!dateString) return '';
+    
+    // Dividimos la cadena "2026-03-11" en partes
+    const [year, month, day] = dateString.split('T')[0].split('-').map(Number);
+    
+    // Creamos la fecha usando el constructor local (el mes es 0-indexado, por eso -1)
+    const date = new Date(year, month - 1, day);
+    
     return date.toLocaleDateString('es-GT', {
       year: 'numeric',
       month: 'long',
