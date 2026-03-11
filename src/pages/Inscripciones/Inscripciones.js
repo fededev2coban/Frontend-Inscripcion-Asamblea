@@ -77,6 +77,15 @@ const Inscripciones = () => {
     }
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    // Extraemos solo la parte YYYY-MM-DD para evitar problemas con la "T" o "Z"
+    const [year, month, day] = dateString.split('T')[0].split('-').map(Number);
+    // Creamos la fecha localmente (mes - 1 porque enero es 0)
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString('es-GT');
+  };
+
   return (
     <div className="inscripciones-page">
       {alert && <div className={`alert alert-${alert.type}`}>{alert.message}</div>}
@@ -96,7 +105,7 @@ const Inscripciones = () => {
             <option value="">-- Seleccionar Evento --</option>
             {eventos.map(evento => (
               <option key={evento.id_evento} value={evento.id_evento}>
-                {evento.nombre_evento} - {new Date(evento.fecha_evento).toLocaleDateString('es-GT')}
+                {evento.nombre_evento} - {formatDate(evento.fecha_evento)}
               </option>
             ))}
           </select>
