@@ -212,7 +212,7 @@ const Nuevo_RegistroPublico = () => {
                 onClick={() => setTipoRegistro('externo')}
               >
                 <FaBriefcase />
-                <span>Cooperativa/Externo</span>
+                <span>Colaboradores/Externo</span>
               </button>
             </div>
           </div>
