@@ -208,7 +208,7 @@ const Cooperativas = () => {
                     value={formData.name_cooperativa}
                     onChange={(e) => setFormData({ ...formData, name_cooperativa: e.target.value })}
                     required
-                    maxLength={50}
+                    maxLength={100}
                   />
                 </div>
 
