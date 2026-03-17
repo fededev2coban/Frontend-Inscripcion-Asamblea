@@ -67,7 +67,7 @@ const Nuevo_RegistroPublico = () => {
         nombres: formData.nombres,
         apellidos: formData.apellidos,
         dpi: parseInt(formData.dpi),
-        email: formData.email || null,
+        email: formData.email || "ejemplo@mail.com",
         telefono: formData.telefono || null
       };
 
